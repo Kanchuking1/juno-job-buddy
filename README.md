@@ -34,3 +34,36 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Code Setup
+
+juno/
+├── src/
+│   ├── app/
+│   │   ├── (auth)/           # Auth pages like /login, /callback
+│   │   ├── (dashboard)/      # Protected routes
+│   │   ├── api/              # NextJS API routes
+│   │   │   ├── auth/route.ts
+│   │   │   └── resume/route.ts
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   ├── components/
+│   │   ├── ui/               # shadcn/ui components
+│   │   ├── layout/
+│   │   └── common/
+│   ├── lib/
+│   │   ├── auth.ts           # Google OAuth setup
+│   │   ├── db.ts             # Prisma / Postgres config
+│   │   ├── s3.ts             # AWS S3 helper
+│   │   └── ai/               # MCP / ADK or LangChain pipelines later
+│   ├── types/
+│   ├── utils/
+│   └── styles/
+│       └── globals.css
+├── prisma/
+│   └── schema.prisma
+├── public/
+├── .env.local
+├── next.config.mjs
+└── package.json
+
