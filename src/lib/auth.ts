@@ -1,6 +1,7 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/route";
+import { auth } from "@/auth";
 
-export const getSession = async () => {
-  return await getServerSession(authOptions);
-};
+export async function getUser() {
+  const session = await auth();
+  if (!session?.user?.email) return null;
+  return session.user;
+}
