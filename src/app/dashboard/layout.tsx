@@ -1,8 +1,15 @@
-export default function DashboardLayout({ children }) {
+import { SidebarProvider } from "@/components/ui/sidebar"
+import { AppSidebar } from "@/components/app-sidebar"
+import AuthNav from "@/components/AuthNav"
+
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen">
-      <Sidebar />
-      <main className="flex-1 p-6">{children}</main>
-    </div>
-  );
+    <SidebarProvider>
+      <AppSidebar />
+      <main className="w-full">
+        <AuthNav />
+        {children}
+      </main>
+    </SidebarProvider>
+  )
 }

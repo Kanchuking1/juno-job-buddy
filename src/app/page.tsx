@@ -6,7 +6,7 @@ export default async function RootPage() {
   const session = await getServerSession(authOptions);
 
   if (session) {
-    redirect("/test-auth");
+    redirect("/dashboard");
   }
 
   redirect("/login");

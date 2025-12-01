@@ -32,7 +32,6 @@ export default function RootLayout({
       >
         <SessionProviderClient>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-            <AuthNav />
             {children}
           </ThemeProvider>
         </SessionProviderClient>
