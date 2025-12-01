@@ -5,15 +5,15 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 export function ApplicationModal() {
-  async function onSubmit(formData) {
-    const res = await fetch("/api/applications", {
-      method: "POST",
-      body: JSON.stringify(formData),
-    });
+  // async function onSubmit(formData) {
+  //   const res = await fetch("/api/applications", {
+  //     method: "POST",
+  //     body: JSON.stringify(formData),
+  //   });
 
-    if (res.ok) toast.success("Application created!");
-    else toast.error("Error creating application.");
-  }
+  //   if (res.ok) toast.success("Application created!");
+  //   else toast.error("Error creating application.");
+  // }
 
   return (
     <Dialog>
@@ -22,7 +22,7 @@ export function ApplicationModal() {
       </DialogTrigger>
 
       <DialogContent>
-        <ApplicationForm onSubmit={onSubmit} />
+        {/* <ApplicationForm onSubmit={onSubmit} /> */}
       </DialogContent>
     </Dialog>
   );

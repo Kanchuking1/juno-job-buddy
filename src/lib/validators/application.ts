@@ -15,3 +15,5 @@ export const createApplicationSchema = z.object({
     "WITHDRAWN",
   ]).optional(),
 });
+
+export type CreateApplication = z.infer<typeof createApplicationSchema>;

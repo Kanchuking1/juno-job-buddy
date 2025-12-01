@@ -20,7 +20,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (status === "authenticated") {
-      router.replace("/test-auth");
+      router.replace("/dashboard/applications");
     }
   }, [status, router]);
 
@@ -36,7 +36,7 @@ export default function LoginPage() {
         <CardFooter>  
           <Button
             variant="outline"
-            onClick={() => signIn("google", { callbackUrl: "/test-auth" })}
+            onClick={() => signIn("google", { callbackUrl: "/dashboard/applications" })}
             className="w-full"
           >
             Sign in with Google

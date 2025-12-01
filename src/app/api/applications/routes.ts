@@ -2,10 +2,11 @@ import { prisma } from "@/lib/prisma";
 import { getUser } from "@/lib/auth";
 import { NextResponse } from "next/server";
 import { createApplicationSchema } from "@/lib/validators/application";
+import type { Application, ApiResponse } from "@/types";
 
-export async function GET(req: Request) {
+export async function GET(req: Request): Promise<NextResponse<ApiResponse<Application[]>>> {
   const user = await getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!user) return NextResponse.json({ error: "Unauthorized", status: 401 }, { status: 401 });
 
   const { searchParams } = new URL(req.url);
 
@@ -26,12 +27,12 @@ export async function GET(req: Request) {
     orderBy: { [sort]: order },
   });
 
-  return NextResponse.json(applications);
+  return NextResponse.json({ data: applications, status: 200 });
 }
 
-export async function POST(req: Request) {
+export async function POST(req: Request): Promise<NextResponse<ApiResponse<Application>>> {
   const user = await getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!user) return NextResponse.json({ error: "Unauthorized", status: 401 }, { status: 401 });
 
   try {
     const json = await req.json();
@@ -46,11 +47,11 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json(application, { status: 201 });
+    return NextResponse.json({ data: application, status: 201 }, { status: 201 });
   } catch (err: any) {
     console.log("Error creating application", err);
     return NextResponse.json(
-      { error: err.message || "Invalid input" },
+      { error: err.message || "Invalid input", status: 400 },
       { status: 400 }
     );
   }
