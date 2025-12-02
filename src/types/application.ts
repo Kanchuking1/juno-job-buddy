@@ -12,14 +12,14 @@ export type Application = {
   userId: string;
   jobTitle: string;
   company: string;
-  jobLocation?: string;
-  jobUrl?: string;
+  jobLocation?: string | null;
+  jobUrl?: string | null;
   status: ApplicationStatus;
   appliedAt: Date;
   updatedAt: Date;
-  notes?: string;
-  description?: string;
-  resumeUsedId?: string;
+  notes?: string | null;
+  description?: string | null;
+  resumeUsedId?: string | null;
 };
 
 export type CreateApplicationRequest = Omit<Application, "id" | "userId" | "appliedAt" | "updatedAt">;

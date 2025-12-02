@@ -1,9 +1,17 @@
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
 import { getUser } from "@/lib/auth";
 import { NextResponse } from "next/server";
 import { createApplicationSchema } from "@/lib/validators/application";
 import type { Application, ApiResponse } from "@/types";
 
+/**
+ * @queryParams
+ * - search: string (optional) - Search term to filter applications
+ * - status: string (optional) - Filter by application status 
+ * - sort: string (optional) - Field to sort by (default: appliedAt)
+ * - order: "asc" | "desc" (optional) - Sort order (default: desc)
+ * @returns All applications
+ */
 export async function GET(req: Request): Promise<NextResponse<ApiResponse<Application[]>>> {
   const user = await getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized", status: 401 }, { status: 401 });
@@ -12,19 +20,32 @@ export async function GET(req: Request): Promise<NextResponse<ApiResponse<Applic
 
   const search = searchParams.get("search") || "";
   const status = searchParams.get("status") || undefined;
-  const sort = searchParams.get("sort") || "appliedAt";
+  const sort = (searchParams.get("sort") || "appliedAt") as string;
   const order = searchParams.get("order") === "asc" ? "asc" : "desc";
 
+  // Validate sort field to avoid invalid fields being passed to Prisma
+  const allowedSorts = new Set(["appliedAt", "updatedAt", "company", "jobTitle"]);
+  const sortField = allowedSorts.has(sort) ? sort : "appliedAt";
+
+  const where: any = {
+    // `getUser()` returns the session user (which has email), so filter by relation via email
+    user: { email: user.email! },
+    ...(status ? { status } : {}),
+  };
+
+  if (search) {
+    where.OR = [
+      { jobTitle: { contains: search, mode: "insensitive" } },
+      { company: { contains: search, mode: "insensitive" } },
+      { jobLocation: { contains: search, mode: "insensitive" } },
+      { description: { contains: search, mode: "insensitive" } },
+      { notes: { contains: search, mode: "insensitive" } },
+    ];
+  }
+
   const applications = await prisma.application.findMany({
-    where: {
-      user: { email: user.email! },
-      OR: [
-        { jobTitle: { contains: search, mode: "insensitive" } },
-        { company: { contains: search, mode: "insensitive" } },
-      ],
-      ...(status ? { status } : {}),
-    },
-    orderBy: { [sort]: order },
+    where,
+    orderBy: { [sortField]: order },
   });
 
   return NextResponse.json({ data: applications, status: 200 });
