@@ -9,7 +9,7 @@ export async function middleware(req: NextRequest) {
 
   if (
     pathname.startsWith("/_next") ||
-    pathname.startsWith("/api/auth") ||
+    pathname.startsWith("/api") ||
     pathname.startsWith("/static") ||
     pathname === "/favicon.ico" ||
     PUBLIC_FILE.test(pathname) ||
