@@ -21,6 +21,8 @@ export function ApplicationTable({ applications, isLoading }: ApplicationTablePr
     getCoreRowModel: getCoreRowModel(),
   });
 
+  let failedToLoad = false;
+
   const renderCell = (key: string, value: string) => {
     if (key === "status") {
       return <StatusBadge status={value} />;
@@ -30,6 +32,20 @@ export function ApplicationTable({ applications, isLoading }: ApplicationTablePr
       return new Date(value).toLocaleDateString();
     }
     return value;
+  }
+
+  async function getAllApplications() {
+    const res = await fetch("/api/applications", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+    
+    }
   }
   
   return (

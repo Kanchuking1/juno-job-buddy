@@ -33,7 +33,7 @@ export function ApplicationModal(props: ApplicationModalProps) {
       description: `${formData.jobTitle} at ${formData.company}`,
     });
     else toast.error("Error creating application.", {
-      duration: 3000,
+      duration: 5000,
       action: {
         label: "Damnit",
         onClick: () => toast.dismiss()

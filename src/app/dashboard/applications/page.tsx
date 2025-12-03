@@ -1,12 +1,10 @@
 import { ApplicationTable } from "@/components/applications/table/ApplicationTable";
 import { ApplicationStats } from "@/components/applications/ApplicationStats";
 import { ApplicationModal } from "@/components/applications/ApplicationModal";
-
-// import { getApplications, getStats } from "@/lib/db/applications";
-
-import { sampleApplications } from "@/app/test_data/applications";
+import { getAllApplications } from "@/lib/applications";
 
 export default async function ApplicationsPage() {
+  const applications = await getAllApplications();
 
   return (
     <>
@@ -16,7 +14,7 @@ export default async function ApplicationsPage() {
             <h1 className="text-3xl font-semibold mb-2">Job Applications Dashboard</h1>
             <ApplicationModal />
           </div>
-          <ApplicationTable applications={sampleApplications} />
+          <ApplicationTable applications={applications} />
         </div>
       </div>
     </>
