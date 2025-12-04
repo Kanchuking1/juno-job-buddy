@@ -45,6 +45,23 @@ export function ApplicationTable() {
     });
   }, [])
 
+  // Listen for application creations and refresh the table when a new one is created
+  useEffect(() => {
+    const handler = async (e: Event) => {
+      try {
+        const data = await fetchApplications();
+        setApplications(data.data || []);
+      } catch (err) {
+        console.error("Failed to refresh applications after create event", err);
+      }
+    };
+
+    window.addEventListener("applications:created", handler as EventListener);
+    return () => {
+      window.removeEventListener("applications:created", handler as EventListener);
+    };
+  }, []);
+
   const renderCell = (key: string, value: string) => {
     if (key === "status" && isApplicationStatus(value)) {
       return <StatusBadge status={value} />;

@@ -24,15 +24,25 @@ export function ApplicationModal(props: ApplicationModalProps) {
       body: JSON.stringify(formData),
     });
 
-    if (res.ok) toast.success("Application created!", {
-      duration: 3000,
-      action: {
-        label: "Cool",
-        onClick: () => toast.dismiss()
-      },
-      description: `${formData.jobTitle} at ${formData.company}`,
-    });
-    else {
+    if (res.ok) {
+      const body = await res.json();
+      const created = body?.data;
+      // Notify other components (client) that a new application was created
+      try {
+        window.dispatchEvent(new CustomEvent("applications:created", { detail: { application: created } }));
+      } catch (e) {
+        // ignore if window is not available
+      }
+
+      toast.success("Application created!", {
+        duration: 3000,
+        action: {
+          label: "Cool",
+          onClick: () => toast.dismiss()
+        },
+        description: `${formData.jobTitle} at ${formData.company}`,
+      });
+    } else {
       const errorBody = await res.json();
       console.error("Error creating application:", errorBody);
       toast.error("Error creating application.", {
@@ -43,7 +53,7 @@ export function ApplicationModal(props: ApplicationModalProps) {
         },
         description: `${errorBody.error || "Unknown error occurred."}`,
       });
-  }
+    }
   }
 
   return (
