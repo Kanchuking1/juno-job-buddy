@@ -32,14 +32,18 @@ export function ApplicationModal(props: ApplicationModalProps) {
       },
       description: `${formData.jobTitle} at ${formData.company}`,
     });
-    else toast.error("Error creating application.", {
-      duration: 5000,
-      action: {
-        label: "Damnit",
-        onClick: () => toast.dismiss()
-      },
-      description: `${res.status}`,
-    });
+    else {
+      const errorBody = await res.json();
+      console.error("Error creating application:", errorBody);
+      toast.error("Error creating application.", {
+        duration: 5000,
+        action: {
+          label: "Damnit",
+          onClick: () => toast.dismiss()
+        },
+        description: `${errorBody.error || "Unknown error occurred."}`,
+      });
+  }
   }
 
   return (

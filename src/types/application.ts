@@ -7,6 +7,18 @@ export type ApplicationStatus =
   | "GHOSTED" 
   | "WITHDRAWN";
 
+export function isApplicationStatus(status: string): status is ApplicationStatus {
+  return [
+    "APPLIED",
+    "IN_PROGRESS",
+    "INTERVIEW",
+    "OFFER",
+    "REJECTED",
+    "GHOSTED",
+    "WITHDRAWN",
+  ].includes(status);
+}
+
 export type Application = {
   id: string;
   userId: string;
@@ -29,7 +41,6 @@ export type UpdateApplicationRequest = Partial<Omit<Application, "id" | "userId"
 export type ApplicationResponse = Application;
 
 export type ApplicationTableProps = {
-  applications: Application[];
   isLoading?: boolean;
   onEdit?: (app: Application) => void;
   onDelete?: (appId: string) => void;

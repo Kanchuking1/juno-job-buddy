@@ -10,21 +10,43 @@ import {
 } from "@tanstack/react-table"
 
 import { StatusBadge } from "./StatusBadge";
-
-import type { ApplicationTableProps } from "@/types";
 import { applicationColumns } from "./columns";
 
-export function ApplicationTable({ applications, isLoading }: ApplicationTableProps) {
+import { Application, isApplicationStatus } from "@/types/application";
+
+import { useState, useEffect } from "react";
+
+const fetchApplications = async () => {
+  const res = await fetch("/api/applications", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (res.ok) {
+    return await res.json();
+  } else {
+    return { data: [] };
+  }
+}
+
+export function ApplicationTable() {
+  const [applications, setApplications] = useState<Application[]>([]);
+  
   const table = useReactTable({
     data: applications,
     columns: applicationColumns,
     getCoreRowModel: getCoreRowModel(),
   });
 
-  let failedToLoad = false;
+  useEffect(() => {
+    fetchApplications().then((data) => {
+      setApplications(data.data || []);
+    });
+  }, [])
 
   const renderCell = (key: string, value: string) => {
-    if (key === "status") {
+    if (key === "status" && isApplicationStatus(value)) {
       return <StatusBadge status={value} />;
     }
 
@@ -32,20 +54,6 @@ export function ApplicationTable({ applications, isLoading }: ApplicationTablePr
       return new Date(value).toLocaleDateString();
     }
     return value;
-  }
-
-  async function getAllApplications() {
-    const res = await fetch("/api/applications", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-    
-    }
   }
   
   return (
