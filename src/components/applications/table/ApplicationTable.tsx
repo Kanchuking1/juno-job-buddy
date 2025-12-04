@@ -11,6 +11,8 @@ import {
 
 import { StatusBadge } from "./StatusBadge";
 import { applicationColumns } from "./columns";
+import { Button } from "@/components/ui/button";
+import { Trash } from "lucide-react";
 
 import { Application, isApplicationStatus } from "@/types/application";
 
@@ -30,6 +32,16 @@ const fetchApplications = async () => {
   }
 }
 
+const deleteApplication = async (id: string) => {
+  const res = await fetch(`/api/applications/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return res.ok;
+}
+
 export function ApplicationTable() {
   const [applications, setApplications] = useState<Application[]>([]);
   
@@ -47,18 +59,35 @@ export function ApplicationTable() {
 
   // Listen for application creations and refresh the table when a new one is created
   useEffect(() => {
-    const handler = async (e: Event) => {
+    const createdHandler = (e: Event) => {
       try {
-        const data = await fetchApplications();
-        setApplications(data.data || []);
+        const ce = e as CustomEvent;
+        const created = ce?.detail?.application;
+        if (created) {
+          setApplications((prev) => [created, ...prev]);
+        }
       } catch (err) {
-        console.error("Failed to refresh applications after create event", err);
+        console.error("Failed to handle applications:created event", err);
       }
     };
 
-    window.addEventListener("applications:created", handler as EventListener);
+    const deletedHandler = (e: Event) => {
+      try {
+        const ce = e as CustomEvent;
+        const id = ce?.detail?.id;
+        if (id) {
+          setApplications((prev) => prev.filter((a) => a.id !== id));
+        }
+      } catch (err) {
+        console.error("Failed to handle applications:deleted event", err);
+      }
+    };
+
+    window.addEventListener("applications:created", createdHandler as EventListener);
+    window.addEventListener("applications:deleted", deletedHandler as EventListener);
     return () => {
-      window.removeEventListener("applications:created", handler as EventListener);
+      window.removeEventListener("applications:created", createdHandler as EventListener);
+      window.removeEventListener("applications:deleted", deletedHandler as EventListener);
     };
   }, []);
 
@@ -98,20 +127,42 @@ export function ApplicationTable() {
         <TableBody>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {renderCell(cell.column.id, String(cell.getValue()))}
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {renderCell(cell.column.id, String(cell.getValue()))}
+                    </TableCell>
+                  ))}
+                  <TableCell>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={async () => {
+                        const id = String((row.original as Application).id);
+                        try {
+                          const ok = await deleteApplication(id);
+                          if (ok) {
+                            // let the event handler update local state
+                            window.dispatchEvent(new CustomEvent("applications:deleted", { detail: { id } }));
+                          } else {
+                            console.error("Failed to delete application", id);
+                          }
+                        } catch (err) {
+                          console.error("Error deleting application", err);
+                        }
+                      }}
+                    >
+                      <Trash className="h-4 w-4" />
+                    </Button>
                   </TableCell>
-                ))}
-              </TableRow>
-            ))
+                </TableRow>
+              ))
           ) : (
             <TableRow>
-              <TableCell colSpan={applicationColumns.length} className="h-24 text-center">
+              <TableCell colSpan={applicationColumns.length + 1} className="h-24 text-center">
                 No results.
               </TableCell>
             </TableRow>
