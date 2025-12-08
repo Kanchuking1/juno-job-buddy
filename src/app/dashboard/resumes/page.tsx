@@ -1,7 +1,7 @@
 import { WorkExperienceTab } from "@/components/resume-builder/WorkExperience"
 import { EducationTab } from "@/components/resume-builder/Education"
 
-import { WorkExperience, Education, ResumeData } from "@/types/resume-builder";
+import { WorkExperience, Education } from "@/types/resume-builder";
 
 import { sampleWorkExperience } from "@/app/test_data/work_experience";
 import { sampleEducation } from "@/app/test_data/education";

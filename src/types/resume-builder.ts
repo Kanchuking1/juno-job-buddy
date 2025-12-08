@@ -15,7 +15,8 @@ export type WorkExperience = {
 
 export type Education = {
     institution: string;
-    degree: string;
+    level: "Masters" | "Bachelors" | "PhD";
+    concentration: string;
     startDate: string;
     endDate: string;
 }
