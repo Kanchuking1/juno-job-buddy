@@ -1,4 +1,4 @@
-import { Home } from "lucide-react"
+import { Home, Album } from "lucide-react"
 
 import {
   Sidebar,
@@ -15,9 +15,14 @@ import {
 // Menu items.
 const items = [
   {
-    title: "Applications Dashboard",
+    title: "Job Applications",
     url: "/dashboard/applications",
     icon: Home,
+  },
+  {
+    title: "Resume Builder",
+    url: "/dashboard/resumes",
+    icon: Album,
   }
 ]
 
